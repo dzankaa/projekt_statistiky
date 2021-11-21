@@ -1,0 +1,97 @@
+96
+0000;paprika
+0001;tekvica
+0002;cibula
+0003;cesnak
+0004;uhorka
+0005;cuketa
+0006;redkovka
+0007;mrkva
+0008;petrzlen
+0009;kel
+0010;kalerab
+0011;jarna cibulka
+1000;jablko
+1001;pomaranc
+1002;mandarinka
+1003;pomelo
+1004;citron
+1005;marhula
+1006;broskyna
+1007;jahody
+1008;hruska
+1009;ringlota
+1010;banan
+1011;ananas
+2000;razny chlieb
+2001;spaldovy chlieb
+2002;celozrnny chlieb
+2003;rozok
+2004;kaiserka
+2005;bageta
+2006;croissant
+2007;oskvarkovy pagac
+2008;syrovy pagac
+2009;pizzova tasticka
+2010;gazdovska zemla
+2011;toastovy chlieb
+3000;prazska sunka
+3001;sunka Admiral
+3002;viedenska sunka
+3003;salama Toreador
+3004;malokarpatska salama
+3005;nitran salama
+3006;lovecka salama
+3007;strazovska salama
+3008;kura
+3009;sliepka
+3010;mlete bravcove maso
+3011;kuracie prsia
+4000;eidam
+4001;ementaler
+4002;gouda
+4003;camembert
+4004;leerdammer
+4005;mozzarela
+4006;mlieko
+4007;biely jogurt
+4008;jahodovy jogurt
+4009;cokoladovy jogurt
+4010;tvaroh
+4011;smotana
+5000;gemerka
+5001;mitická
+5002;budis
+5003;saguaro
+5004;rajec
+5005;baldovska
+5006;klastorna
+5007;vinea
+5008;pepsi
+5009;coca-cola
+5010;kofola
+5011;pomarancovy dzus
+6000;milka mliecna cokolada
+6001;figaro mliecna cokolada
+6002;oreo
+6003;bebe brumik
+6004;raffaelo
+6005;toffifee
+6006;slovakia cispy
+6007;arasidy
+6008;pistacie
+6009;tycinky
+6010;kukuricne chrumky
+6011;arasidove chrumky
+7000;cierne korenie
+7001;bazalka
+7002;oregano
+7003;kecup
+7004;horcica
+7005;chren
+7006;toaletny papier
+7007;plienky
+7008;vreckovky
+7009;alobal
+7010;zuvacky
+7011;sacky do kosa
