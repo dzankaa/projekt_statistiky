@@ -1,6 +1,7 @@
 import tkinter
 import time
 from datetime import datetime, timedelta
+import os
 
 root = tkinter.Tk()
 root.attributes('-fullscreen',True) # hlavne okno na celu obrazovku
@@ -83,7 +84,7 @@ def druha(b2):
         c.create_text(width/5*4, height//3+a, text=nazvy2[i], font='Roboto 11', anchor='w',tags='text')
         c.create_text(width/10*9, height//3+a, text=str(hodnoty2[i]), font='Roboto 11', tags='text')
         a += height//17
-    if len(vobec_nepredane) > 0:
+    if len(vobec_nepredane) > 10:
             button_nepredane.place(x=width//9*2, y=height//8*7, width=width/10)
 
 def nepredane():
@@ -115,7 +116,7 @@ def tretia(b3):
     c.create_text(width//5*2, height//6, text='Priemerná cena nákupu', font='Roboto 27', tags='text')
     a = height//20
     c.create_text(width//8*7, height//3, text=' aktualna priemerna cena \n dnesnych nakupov: ', font='Roboto 12', tags='text')
-    c.create_text(width//9*8, height//3+a, text=str(hodnoty3tyzden[-1]), font='Roboto 11', tags='text')
+    c.create_text(width//9*8, height//3+a, text=str(round(hodnoty3tyzden[-1],2)), font='Roboto 11', tags='text')
     c.create_text(width//8*7, height//3+2*a, text='priemerne ceny nakupov \n za posledny tyzden:', font='Roboto 12', tags='text')
     if nakup:
         hod3 = hodnoty3den
@@ -129,24 +130,32 @@ def tretia(b3):
         button_dnes['bg']=button_dnes['activebackground']='#e0da63'
     pom_w3 = (w2_graf - w1_graf)/len(hod3)
     pom_h3 = (h1_graf - h2_graf)/max(hod3)
-    graf3 = ()
-    cisla = max(hod3)/5
-    for i in range(5):
-        c.create_oval(w1_graf-3, h1_graf-((h1_graf-h2_graf)/max(hod3))*cisla-3,w1_graf+3, h1_graf-((h1_graf-h2_graf)/max(hod3))*cisla+3, fill='black', tags='g3')
-        c.create_text(w1_graf-width//80, h1_graf-((h1_graf-h2_graf)/max(hod3))*cisla, text=str(round(cisla,1)), tags='g3')
-        cisla += max(hod3)/5    
-    for i in range(len(hod3)):
-        graf3 += (w1_graf+pom_w3*i+pom_w3//2, h1_graf-pom_h3*hod3[i])
-        c.create_oval(w1_graf+pom_w3*i+pom_w3//2-3, h1_graf-pom_h3*hod3[i]-3, w1_graf+pom_w3*i+pom_w3//2+3, h1_graf-pom_h3*hod3[i]+3, fill='#aca932', outline='#aca932',tags='g3')
-        a += height/20
-    a = height/20
+    if dnesne_nakupy != [0.001] or hod3 == hodnoty3tyzden:
+        graf3 = ()
+        cisla = max(hod3)/5
+        for i in range(5):
+            c.create_oval(w1_graf-3, h1_graf-((h1_graf-h2_graf)/max(hod3))*cisla-3,w1_graf+3, h1_graf-((h1_graf-h2_graf)/max(hod3))*cisla+3, fill='black', tags='g3')
+            c.create_text(w1_graf-width//80, h1_graf-((h1_graf-h2_graf)/max(hod3))*cisla, text=str(round(cisla,1)), tags='g3')
+            cisla += max(hod3)/5    
+        for i in range(len(hod3)):
+            graf3 += (w1_graf+pom_w3*i+pom_w3//2, h1_graf-pom_h3*hod3[i])
+            c.create_oval(w1_graf+pom_w3*i+pom_w3//2-3, h1_graf-pom_h3*hod3[i]-3, w1_graf+pom_w3*i+pom_w3//2+3, h1_graf-pom_h3*hod3[i]+3, fill='#aca932', outline='#aca932',tags='g3')
+            a += height/20
+        a = height/20
+        c.create_text(width/2, h1_graf+h1_graf/10, text='pre zobrazenie konkrétnych hodnôt prejdi myšou cez body', font='Roboto 10', tags='text')
+        if len(hod3) >1 :
+            c.create_line(graf3, fill='#aca932', tags='g3')
+        else:
+            c.create_line(graf3, graf3, fill='#aca932', tags='g3')
+    else:
+        #c.create_oval((w2_graf+w1_graf)/2-3, h1_graf-3, (w2_graf+w1_graf)/2+3, h1_graf+3, fill='black', tags='g3')
+        c.create_text(w2_graf-w1_graf, h1_graf-h2_graf, text='Dnes sa nepredali \nzatial ziadne tovary', font='Roboto 13', fill='#679222', tags='g3')
     for i in range(len(hodnoty3tyzden)):
-        c.create_text(width//9*8, height//3+2*(height//20)+a, text=str(hodnoty3tyzden[i]), font='Roboto 11', tags='g3')
-        c.create_text(width//7*6, height//3+2*(height//20)+a, text=str(datumy[i]), font='Roboto 11', tags='g3')
-        a += height/20
-    c.create_line(graf3, fill='#aca932', tags='g3') 
+            c.create_text(width//9*8, height//3+2*(height//20)+a, text=str(round(hodnoty3tyzden[i],2)), font='Roboto 11', tags='g3')
+            c.create_text(width//7*6, height//3+2*(height//20)+a, text=str(datumy[i]), font='Roboto 11', tags='g3')
+            a += height/20
     c.create_text(width/2, h1_graf+h1_graf/20, text='hodnoty nakupov za '+dopln, font='Roboto 15', tags='text')
-    c.create_text(width/2, h1_graf+h1_graf/10, text='pre zobrazenie konkrétnych hodnôt prejdi myšou cez body', font='Roboto 10', tags='text')
+    
       
 def stvrta(b4):
     global posledny_b
@@ -160,7 +169,7 @@ def stvrta(b4):
     naklad_trzba()
     c.create_text(width//5*2, height//6, text='Aktuálne tržby a náklady', font='Roboto 27', tags='text')
     c.create_text(width/2, h1_graf+h1_graf/20, text='pre zobrazenie konkrétnych hodnôt prejdi myšou cez body', font='Roboto 10', tags='text')
-    hod4 = ['aktuálna tržba:', str(hod4trzby[-1]), 'aktuálne náklady:', str(hod4naklady[-1]), 'rozdiel:', str(hod4trzby[-1]-hod4naklady[-1])]
+    hod4 = ['aktuálna tržba:', str(round(hod4trzby[-1],2)), 'aktuálne náklady:', str(round(hod4naklady[-1],2)), 'rozdiel:', str(round(hod4trzby[-1]-hod4naklady[-1],2))]
     a = height/20
     for i in range(6):
         c.create_text(width/7*6, height/5*2+a*i, text=hod4[i], font='Roboto 11', tags='text')
@@ -180,19 +189,19 @@ def naklad_trzba():
     cisla = maxi/5
     for i in range(5):
         c.create_oval(w1_graf-3, h1_graf-((h1_graf-h2_graf)/maxi)*cisla-3,w1_graf+3, h1_graf-((h1_graf-h2_graf)/maxi)*cisla+3, fill='black', tags='g4ab')
-        c.create_text(w1_graf-width//80, h1_graf-((h1_graf-h2_graf)/maxi)*cisla, text=str(cisla), tags='g4ab')
+        c.create_text(w1_graf-width//80, h1_graf-((h1_graf-h2_graf)/maxi)*cisla, text=str(round(cisla,2)), tags='g4ab')
         cisla += maxi/5
     for i in range(len(hod4trzby)):
         graf4a += (w1_graf+pom_w4*i+pom_w4//2, h1_graf-(pom_h4*hod4trzby[i]))
         graf4b += (w1_graf+pom_w4*i+pom_w4//2, h1_graf-(pom_h4*hod4naklady[i]))
-        c.create_oval(w1_graf+pom_w4*i+pom_w4//2-3, h1_graf-pom_h4*hod4trzby[i]-3, w1_graf+pom_w4*i+pom_w4//2+3, h1_graf-pom_h4*hod4trzby[i]+3, fill='#679222', outline='#679222',tags='g4ab')
-        c.create_oval(w1_graf+pom_w4*i+pom_w4//2-3, h1_graf-pom_h4*hod4naklady[i]-3, w1_graf+pom_w4*i+pom_w4//2+3, h1_graf-pom_h4*hod4naklady[i]+3, fill='#aca932', outline='#aca932',tags='g4ab')
-    c.create_line(graf4a, fill='#679222', tags='g4ab')
-    c.create_line(graf4b, fill='#aca932', tags='g4ab')
+        c.create_oval(w1_graf+pom_w4*i+pom_w4//2-3, h1_graf-pom_h4*hod4trzby[i]-3, w1_graf+pom_w4*i+pom_w4//2+3, h1_graf-pom_h4*hod4trzby[i]+3, fill='#00701a', outline='#679222',tags='g4ab')
+        c.create_oval(w1_graf+pom_w4*i+pom_w4//2-3, h1_graf-pom_h4*hod4naklady[i]-3, w1_graf+pom_w4*i+pom_w4//2+3, h1_graf-pom_h4*hod4naklady[i]+3, fill='#ffee58', outline='#aca932',tags='g4ab')
+    c.create_line(graf4a, fill='#00701a', width=1, tags='g4ab')
+    c.create_line(graf4b, fill='#ffee58', tags='g4ab')
     c.create_text(w2_graf-w2_graf/12, h1_graf+h1_graf/20, text='tržby', font='Roboto 10', tags='g4ab')
     c.create_text(w2_graf-w2_graf/12, h1_graf+h1_graf/10, text='náklady', font='Roboto 10', tags='g4ab')
-    c.create_line(w2_graf, h1_graf+h1_graf/20, w2_graf-w2_graf/20 ,h1_graf+h1_graf/20, fill='#679222', width=3, tags='g4ab')
-    c.create_line(w2_graf, h1_graf+h1_graf/10, w2_graf-w2_graf/20 ,h1_graf+h1_graf/10, fill='#aca932', width=3, tags='g4ab')
+    c.create_line(w2_graf, h1_graf+h1_graf/20, w2_graf-w2_graf/20 ,h1_graf+h1_graf/20, fill='#00701a', width=4, tags='g4ab')
+    c.create_line(w2_graf, h1_graf+h1_graf/10, w2_graf-w2_graf/20 ,h1_graf+h1_graf/10, fill='#ffee58', width=4, tags='g4ab')
     mys = True
     pom = 4
     c.bind('<Motion>', myska)
@@ -212,11 +221,11 @@ def rozdiel():
     c.create_line(w1_graf, h4_graf , w2_graf, h4_graf, tags='g4c')
     pom_w4 = (w2_graf - w1_graf)/len(hod4trzby)
     graf4c = ()
-    cisla = round(mini/10)*10
+    cisla = round(mini,2)
     for i in range(6):
         c.create_oval(w1_graf-3, h4_graf-dielik*cisla-3, w1_graf+3, h4_graf-dielik*cisla+3, fill='black', tags='g4c')
-        c.create_text(w1_graf-width//80, h4_graf-dielik*cisla, text=str(cisla), tags='g4c')
-        cisla += round(((abs(mini)+abs(maxi))/6)/10)*10
+        c.create_text(w1_graf-width//80, h4_graf-dielik*cisla, text=str(round(cisla)), tags='g4c')
+        cisla += round((abs(mini)+abs(maxi))/6,2)
     for i in range(len(hod4trzby)):
         graf4c += (w1_graf+pom_w4*i+pom_w4//2, h4_graf-(dielik*hod4roz[i]))
         c.create_oval(w1_graf+pom_w4*i+pom_w4//2-3, h4_graf-dielik*hod4roz[i]-3, w1_graf+pom_w4*i+pom_w4//2+3, h4_graf-dielik*hod4roz[i]+3, fill='#aca932', outline='#aca932',tags='g4c')
@@ -240,19 +249,19 @@ def myska(suradnice):
                     pomocna = '\ncas: '+casy[i]
                 else:
                     pomocna = '\ndatum: '+datumy[i]
-                popis = c.create_text(w1_graf+pom_w3*i+pom_w3//2-10, h1_graf-pom_h3*hod3[i]-20, text='hodnota: '+str(hod3[i])+pomocna, font='Roboto 8', tags='g3')
+                popis = c.create_text(w1_graf+pom_w3*i+pom_w3//2-10, h1_graf-pom_h3*hod3[i]-20, text='hodnota: '+str(round(hod3[i],2))+pomocna, font='Roboto 8', tags='g3')
                 
     elif pom == 4:
         for i in range(len(hod4trzby)):
             if (w1_graf+pom_w4*i+pom_w4//2-10 <= xm <= w1_graf+pom_w4*i+pom_w4//2+10) and (h1_graf-pom_h4*hod4trzby[i]-10 <= ym <= h1_graf-pom_h4*hod4trzby[i]+10):
-                popis = c.create_text(w1_graf+pom_w4*i+pom_w4//2-10, h1_graf-pom_h4*hod4trzby[i]-20, text='hodnota: '+str(hod4trzby[i])+'\ndatum: '+datumy[i], font='Roboto 8', tags='g4ab')
+                popis = c.create_text(w1_graf+pom_w4*i+pom_w4//2-10, h1_graf-pom_h4*hod4trzby[i]-20, text='hodnota: '+str(round(hod4trzby[i],2))+'\ndatum: '+datumy[i], font='Roboto 8', tags='g4ab')
                 
             elif (w1_graf+pom_w4*i+pom_w4//2-10 <= xm <= w1_graf+pom_w4*i+pom_w4//2+10) and (h1_graf-pom_h4*hod4naklady[i]-10 <= ym <= h1_graf-pom_h4*hod4naklady[i]+10):
-                popis = c.create_text(w1_graf+pom_w4*i+pom_w4//2-10, h1_graf-pom_h4*hod4naklady[i]-20, text='hodnota: '+str(hod4naklady[i])+'\ndatum: '+datumy[i], font='Roboto 8', tags='g4ab')
+                popis = c.create_text(w1_graf+pom_w4*i+pom_w4//2-10, h1_graf-pom_h4*hod4naklady[i]-20, text='hodnota: '+str(round(hod4naklady[i],2))+'\ndatum: '+datumy[i], font='Roboto 8', tags='g4ab')
     if pom == 5:
         for i in range(len(hod4roz)):
             if (w1_graf+pom_w4*i+pom_w4//2-10 <= xm <= w1_graf+pom_w4*i+pom_w4//2+10) and (h4_graf-dielik*hod4roz[i]-10 <= ym <= h4_graf-dielik*hod4roz[i]+10):
-                popis = c.create_text(w1_graf+pom_w4*i+pom_w4//2-10, h4_graf-dielik*hod4roz[i]-20, text='hodnota: '+str(hod4roz[i])+'\ndatum: '+datumy[i], font='Roboto 8', tags='g4c')                
+                popis = c.create_text(w1_graf+pom_w4*i+pom_w4//2-10, h4_graf-dielik*hod4roz[i]-20, text='hodnota: '+str(round(hod4roz[i],2))+'\ndatum: '+datumy[i], font='Roboto 8', tags='g4c')                
                                               
 def dnes():
     global nakup
@@ -318,134 +327,214 @@ button_nepredane = tkinter.Button(text='tovary nepredane ani raz', command=nepre
                                   activebackground='#aca932', borderwidth=0) 
 
 #..............TAHANIE HODNOT Z TXT.....................
-subor_s = open('STATISTIKY.txt', 'r', encoding='UTF-8')
-pocet_riadkov2 = subor_s.readline()
 
-predaj = []
-nakup = []
-for riadok in subor_s:
-    riadok = riadok.strip().split(';')
-    if riadok[0].upper() == 'P':
-        predaj.append(riadok)
+def nacitaj_statistiky():
+    global nakup,predaj
+    lock_s = open('STATISTIKY_LOCK.txt','w')
+    lock_s.close()
+    subor_s = open('STATISTIKY.txt', 'r', encoding='UTF-8')
+    pocet_riadkov2 = subor_s.readline()
+    predaj = []
+    nakup = []
+    for riadok in subor_s:
+        riadok = riadok.strip().split(';')
+        if riadok[0].upper() == 'P':
+            predaj.append(riadok)
+        else:
+            nakup.append(riadok)
+    subor_s.close()
+    os.remove('STATISTIKY_LOCK.txt')
+    upratanie_dat()
+    
+def statistiky_lock():
+    if os.path.exists('STATISTIKY_LOCK.txt'):
+        c.after(1000, nacitaj_statistiky)
     else:
-        nakup.append(riadok)
-subor_s.close()
-#treba spocitat, ak sa z jedneho kodu predalo viacero kusov v roznch nakupoch
-kod_predanych = []
-pocet_predanych = []
-for prvok in predaj:
-    if prvok[2] in kod_predanych:
-        hladana = kod_predanych.index(prvok[2])
-        pocet_predanych[hladana] = int(pocet_predanych[hladana])+int(prvok[3])
-    else:
-        kod_predanych.append(prvok[2])
-        pocet_predanych.append(prvok[3])
-predane_tovary = list(zip(kod_predanych,pocet_predanych)) #vytvoreny zoznam s kodmi a poctami predanych
+        nacitaj_statistiky()
 
-#10 najpredavanejsich
-najviac = sorted(sorted(predane_tovary, reverse=True, key=lambda kluc: int(kluc[1]))[:10])#hladam 10 najviac
-najviac = list(map(list, najviac)) #musim prerobit n-tice v zozname na zoznamy
-#10 najmenej predavanych0
-najmenej = sorted(sorted(predane_tovary, key=lambda kluc: int(kluc[1]))[:10])
-najmenej = list(map(list, najmenej))
+def tovar_lock():
+    if os.path.exists('TOVAR_LOCK.txt'):
+        c.after(1000,tovar_lock)
+    else:
+        nacitaj_tovar()
 
 #priradenie nazvov
-subor_t = open('TOVAR.txt', 'r', encoding='UTF-8')
-pocet_riadkov1 = subor_t.readline()
-vobec_nepredane = []
-a = 0
-b = 0
-for i in range(int(pocet_riadkov1)-1):
-    riadok = subor_t.readline().strip()
-    if a < 10 and riadok[:4] == najviac[a][0] :
-        pom = riadok[5:].replace(' ','\n')
-        najviac[a][0] = pom
-        a += 1
-    if b < 10 and riadok[:4] == najmenej[b][0]:
-        pom = riadok[5:].replace(' ','\n')
-        najmenej[b][0] = pom
-        b += 1
+def nacitaj_tovar():
+    global vobec_nepredane, najviac, najmenej
+    lock_t = open('TOVAR_LOCK.txt','w')
+    lock_t.close()
+    subor_t = open('TOVAR.txt', 'r', encoding='UTF-8')
+    pocet_riadkov1 = subor_t.readline()
+    vobec_nepredane = []
+    a = 0
+    b = 0
+    for i in range(int(pocet_riadkov1)-1):
+        riadok = subor_t.readline().strip()
+        if a < 10 and riadok[:4] == najviac[a][0] :
+            pom = riadok[5:].replace(' ','\n')
+            najviac[a][0] = pom
+            a += 1
+        if b < 10 and riadok[:4] == najmenej[b][0]:
+            pom = riadok[5:].replace(' ','\n')
+            najmenej[b][0] = pom
+            b += 1
+        else:
+            vobec_nepredane.append(riadok[5:])
+            pridaj = False
+    subor_t.close()
+    os.remove('TOVAR_LOCK.txt')
+
+    praca_s_datami()
+    
+def upratanie_dat():
+    #treba spocitat, ak sa z jedneho kodu predalo viacero kusov v roznch nakupoch
+    global najviac, najmenej
+    kod_predanych = []
+    pocet_predanych = []
+    for prvok in predaj:
+        if prvok[2] in kod_predanych:
+            hladana = kod_predanych.index(prvok[2])
+            pocet_predanych[hladana] = int(pocet_predanych[hladana])+int(prvok[3])
+        else:
+            kod_predanych.append(prvok[2])
+            pocet_predanych.append(prvok[3])
+    predane_tovary = list(zip(kod_predanych,pocet_predanych)) #vytvoreny zoznam s kodmi a poctami predanych
+
+    #10 najpredavanejsich
+    najviac = sorted(sorted(predane_tovary, reverse=True, key=lambda kluc: int(kluc[1]))[:10])#hladam 10 najviac
+    najviac = list(map(list, najviac)) #musim prerobit n-tice v zozname na zoznamy
+    #10 najmenej predavanych0
+    najmenej = sorted(sorted(predane_tovary, key=lambda kluc: int(kluc[1]))[:10])
+    najmenej = list(map(list, najmenej))
+
+    tovar_lock()
+
+def praca_s_datami():
+    global hodnoty1, nazvy1, hodnoty2, nazvy2, najviac, najmenej, hod4trzby, hod4naklady, datumy, hodnoty3tyzden, hodnoty3den, dnesne_nakupy, casy
+    najviac = sorted(najviac, reverse=True, key=lambda kluc: int(kluc[1]))#finalne zoradenie
+    najmenej = sorted(najmenej, reverse=True, key=lambda kluc: int(kluc[1]))
+    hodnoty1 = []
+    nazvy1 = []
+    hodnoty2 = []
+    nazvy2 = []
+    for i in range(10):
+        hodnoty1.append(int(najviac[i][1]))
+        nazvy1.append(najviac[i][0])
+        if len(vobec_nepredane) > 10:
+            hodnoty2.append(int(najmenej[i][1]))
+            nazvy2.append(najmenej[i][0])
+    if len(vobec_nepredane) < 10:
+        for i in range(10-len(vobec_nepredane)):
+            hodnoty2.append(int(najmenej[i][1]))
+            nazvy2.append(najmenej[i][0])
+        for i in range(len(vobec_nepredane)):
+            hodnoty2.append(0)
+            nazvy2.append(vobec_nepredane)
+            
+    #hodnoty dnesnych nakupov
+    datum = time.strftime('%d.%m.%y', time.localtime())
+    i = -1
+    dnesne_nakupy = []
+    casy = []
+    while datum == predaj[i][6]:
+        kus = int(predaj[i][3])
+        cena = float(predaj[i][4])
+        if i < -1 and predaj[i][1] == predaj[i+1][1]:
+            stara_suma = dnesne_nakupy[-1]
+            dnesne_nakupy[-1] = stara_suma + round(kus*cena,2)
+        else:
+            dnesne_nakupy.append(round(kus*cena,2))
+            casy.append(predaj[i][5])
+        i -= 1
+
+    if dnesne_nakupy == []:
+        dnesne_nakupy = [0.001]
     else:
-        vobec_nepredane.append(riadok[5:])
-        pridaj = False
-subor_t.close()
-najviac = sorted(najviac, reverse=True, key=lambda kluc: int(kluc[1]))#finalne zoradenie
-najmenej = sorted(najmenej, reverse=True, key=lambda kluc: int(kluc[1]))
-hodnoty1 = []
-nazvy1 = []
-hodnoty2 = []
-nazvy2 = []
-for i in range(10):
-    hodnoty1.append(int(najviac[i][1]))
-    nazvy1.append(najviac[i][0])
-    hodnoty2.append(int(najmenej[i][1]))
-    nazvy2.append(najmenej[i][0])
+        dnesne_nakupy.reverse()
+    hodnoty3den = dnesne_nakupy
+    casy.reverse()
 
-#hodnoty dnesnych nakupov
-datum = time.strftime('%d.%m.%y', time.localtime())
-i = -1
-dnesne_nakupy = []
-casy = []
-while datum == predaj[i][6]:
-    kus = int(predaj[i][3])
-    cena = float(predaj[i][4])
-    if i < -1 and predaj[i][1] == predaj[i+1][1]:
-        stara_suma = dnesne_nakupy[-1]
-        dnesne_nakupy[-1] = stara_suma + round(kus*cena,2)
+    #priemerne hodnoty za tyzden a trzby
+    posledny_datum = datetime.strftime(datetime.now() - timedelta(6), '%d.%m.%y')
+    i = -1
+    tyzden = []
+
+    while i >= -len(predaj) and (posledny_datum <= predaj[i][6] or (posledny_datum[:2] >= predaj[i][6][:2]
+                            and (posledny_datum[3:5] <= predaj[i][6][3:5] or (posledny_datum[3:5] == '12' and predaj[i][6][3:5] == '01')))):
+        tyzden.append(predaj[i])
+        i -= 1
+        
+    datumy = []
+    trzby = [0 for i in range(7)]
+    pocet = [0 for i in range(7)]
+    for i in range(7):
+        nasiel = False
+        for j in range(len(tyzden)):
+            if datetime.strftime(datetime.now() - timedelta(i), '%d.%m.%y') in tyzden[j]:
+                transakcia = int(tyzden[j][1])
+                index = j+1
+                pocet[i] += 1
+                trzby[i] += int(tyzden[j][3]) * float(tyzden[j][4])
+                while index < len(tyzden) and datetime.strftime(datetime.now() - timedelta(i), '%d.%m.%y') in tyzden[index]:
+                    trzby[i] += int(tyzden[index][3]) * float(tyzden[index][4])
+                    if index < len(tyzden) and transakcia != int(tyzden[index][1]):
+                        pocet[i] += 1
+                        transakcia = int(tyzden[index][1])
+                    index += 1
+                datumy.append(datetime.strftime(datetime.now() - timedelta(i), '%d.%m.'))
+                nasiel = True
+                break
+        if not nasiel:
+            datumy.append(datetime.strftime(datetime.now() - timedelta(i), '%d.%m.'))
+    print(pocet)
+    print(trzby)
+    hodnoty3tyzden = []
+    for i in range(len(trzby)):
+        if pocet[i] == 0:
+            hodnoty3tyzden.append(0.001)
+        else:
+            hodnoty3tyzden.append(round(trzby[i]/pocet[i],2))
+    datumy.reverse()
+    hodnoty3tyzden.reverse()
+    hod4trzby = []
+    hod4trzby = trzby
+    hod4trzby.reverse()
+
+    #naklady
+    i = -1
+    tyzden2 = []
+    while i >= -len(nakup) and (posledny_datum <= nakup[i][6] or (posledny_datum[:2] >= nakup[i][6][:2]
+                           and (posledny_datum[3:5] <= nakup[i][6][3:5] or (posledny_datum[3:5] == '12' and nakup[i][6][3:5] == '01')))):
+        tyzden2.append(nakup[i])
+        i -= 1
+     
+    naklady = [0 for i in range(7)]
+    for i in range(7):
+        nasiel = False
+        for j in range(len(tyzden2)):
+            if datetime.strftime(datetime.now() - timedelta(i), '%d.%m.%y') in tyzden2[j]:
+                index = j+1
+                naklady[i] += int(tyzden2[j][3]) * float(tyzden2[j][4])
+                while index < len(tyzden2) and datetime.strftime(datetime.now() - timedelta(i), '%d.%m.%y') in tyzden2[index]:
+                    naklady[i] += int(tyzden2[index][3]) * float(tyzden2[index][4])
+                    index += 1
+                datumy.append(datetime.strftime(datetime.now() - timedelta(i), '%d.%m.%y'))
+                nasiel = True
+                break
+    naklady.reverse()
+    hod4naklady = naklady
+
+def aktualizacia():
+    if cas_stat != os.path.getmtime('STATISTIKY.txt') or cas_tovar != os.path.getmtime('TOVAR.txt'):
+        statistiky_lock()
     else:
-        dnesne_nakupy.append(round(kus*cena,2))
-        casy.append(predaj[i][5])
-    i -= 1
-dnesne_nakupy.reverse()
-if dnesne_nakupy == []:
-    dnesne_nakupy = [0]
-hodnoty3den = dnesne_nakupy
-casy.reverse()
-
-#priemerne hodnoty za tyzden a trzby
-posledny_datum = datetime.strftime(datetime.now() - timedelta(6), '%d.%m.%y')
-i = -1
-pocet = 1
-trzby = []
-pocet = []
-datumy = []
-while i > -len(predaj) or posledny_datum[:2] <= predaj[i][6][:2]: 
-    kus = int(predaj[i][3])
-    cena = float(predaj[i][4])
-    if i < -1 and predaj[i][6] == predaj[i+1][6]:
-        stara_suma = trzby[-1]
-        trzby[-1] = round(stara_suma + kus*cena,2)
-        stary_pocet = pocet[-1]
-        pocet[-1] = stary_pocet+1
-    else:
-        trzby.append(round(kus*cena,2))
-        pocet.append(1)
-        datumy.append(predaj[i][6][:6])
-    i -= 1
-trzby.reverse()
-hod4trzby = trzby
-tyzdnovy_nakup = [round(i/j,2) for i,j in zip(trzby, pocet)]
-hodnoty3tyzden = tyzdnovy_nakup
-datumy.reverse()
-
-#naklady
-i = -1
-naklady = []
-while i > -len(nakup) or posledny_datum[:2] <= nakup[i][6][:2]: 
-    kus = int(nakup[i][3])
-    cena = float(nakup[i][4])
-    if i < -1 and nakup[i][6] == nakup[i+1][6]:
-        stara_suma = naklady[-1]
-        naklady[-1] = round(stara_suma + kus*cena,2)
-    else:
-        naklady.append(round(kus*cena,2))
-    i -= 1
-naklady.reverse()
-hod4naklady = naklady
-
-
-
+        c.after(1000,aktualizacia)
+        
 #...............SPUSTANIE PROGRAMU......................
+cas_stat = os.path.getmtime('STATISTIKY.txt')
+cas_tovar = os.path.getmtime('TOVAR.txt')
+statistiky_lock()
+aktualizacia()
 nakup=1
 mys = True
 popis = c.create_text(0,0) # ku g3 - aby deletovalo, najprv musim vytvorit
